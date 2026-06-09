@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Perpustakaan</title>
+    <style>
+        /* ==================== STYLING HALAMAN LOGIN (SOFT PINK) ==================== */
+        #loginPage {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #FFEBEE; /* Latar Belakang Soft Pink */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 9999;
+        }
+        .login-container {
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(255, 182, 193, 0.4);
+            width: 340px;
+            text-align: center;
+        }
+        .profile-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #F8BBD0;
+            margin-bottom: 12px;
+        }
+        .profile-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #880E4F;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+            font-size: 14px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #FFCDD2;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #FFF9FA;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #F06292;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffffff; /* Tombol warna putih */
+            color: #F06292; /* Isi tulisan warna soft pink */
+            border: 2px solid #F06292;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        .btn-login:hover {
+            background-color: #F06292;
+            color: #ffffff;
+        }
+        .error-message {
+            color: #D81B60;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        /* ==================== STYLING HALAMAN DASHBOARD ==================== */
+        #dashboardPage {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #fafafa;
+            display: none; /* Disembunyikan di awal sebelum login */
+        }
+        .header { display: flex; justify-content: space-between; align-items: center; background: #333; color: white; padding: 10px 20px; border-radius: 5px; }
+        .header a { color: #ff4d4d; text-decoration: none; font-weight: bold; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #007BFF; color: white; }
+        h2 { margin-top: 40px; color: #333; border-bottom: 2px solid #007BFF; padding-bottom: 5px; }
+        
+        /* Tombol CRUD */
+        .btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        .btn-tambah { background-color: #28a745; color: white; padding: 8px 14px; margin-bottom: 10px; }
+        .btn-edit { background-color: #ffc107; color: black; margin-right: 5px; }
+        .btn-hapus { background-color: #dc3545; color: white; }
+        
+        /* Pop-up Modal Form */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 10000; }
+        .modal-content { background: white; padding: 25px; border-radius: 8px; width: 400px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .modal-content h3 { margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .form-control { width: 100%; padding: 8px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        .modal-actions { text-align: right; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage">
+        <div class="login-container">
+            <img src="https://images.unsplash.com/photo-1513001900722-370f803f498d?q=80&w=400" alt="Buku Estetik" class="profile-img">
+            <div class="profile-name">Nadia Ramadhani</div>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="Masukkan username">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Masukkan password">
+                </div>
+                <button type="submit" class="btn-login">MASUK</button>
+                <div id="error" class="error-message">Username atau password salah! (Gunakan: admin)</div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="dashboardPage">
+        <div class="header">
+            <h3 id="welcomeMessage">Selamat Datang, Nadia Ramadhani!</h3>
+            <a onclick="prosesLogout()">Logout</a>
+        </div>
+
+        <h1>Sistem Informasi Perpustakaan</h1>
+
+        <h2>1. Data Buku</h2>
+        <button class="btn btn-tambah" onclick="bukaModalForm('buku')">+ Tambah Buku</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Judul Buku</th>
+                    <th>Pengarang</th>
+                    <th>Penerbit</th>
+                    <th>Tahun</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="isiTabelBuku"></tbody>
+        </table>
+
+        <h2>2. Data Anggota</h2>
+        <button class="btn btn-tambah" onclick="bukaModalForm('anggota')">+ Tambah Anggota</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama Anggota</th>
+                    <th>JK</th>
+                    <th>No. Telepon</th>
+                    <th>Alamat</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="isiTabelAnggota"></tbody>
+        </table>
+
+        <h2>3. Data Peminjaman</h2>
+        <button class="btn btn-tambah" onclick="bukaModalForm('peminjaman')">+ Tambah Peminjaman</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Pinjam</th>
+                    <th>Nama Anggota</th>
+                    <th>Judul Buku</th>
+                    <th>Tgl Pinjam</th>
+                    <th>Tgl Kembali</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="isiTabelPeminjaman"></tbody>
+        </table>
+    </div>
+
+
+    <div id="modalFormDynamic" class="modal">
+        <div class="modal-content">
+            <h3 id="judulModal">Form Perpustakaan</h3>
+            <form id="formTransaksi">
+                <input type="hidden" id="kategoriForm">
+                <input type="hidden" id="indexDataTerpilih">
+                <div id="wadahInputan"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-hapus" onclick="tutupModalForm()">Batal</button>
+                    <button type="submit" class="btn btn-tambah" style="background-color: #007BFF;">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // --- LOGIC AUTENTIKASI (LOGIN HOOK) ---
+        const loginPage = document.getElementById('loginPage');
+        const dashboardPage = document.getElementById('dashboardPage');
+
+        // Cek apakah statusnya sudah login sebelumnya di browser ini
+        if (localStorage.getItem('session_user') === 'Nadia Ramadhani') {
+            tampilkanDashboard();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+
+            // Akun login bawaan sistem (Username: admin, Password: admin)
+            if (usernameInput === 'admin' && passwordInput === 'admin') {
+                localStorage.setItem('session_user', 'Nadia Ramadhani');
+                tampilkanDashboard();
+            } else {
+                document.getElementById('error').style.display = 'block';
+            }
+        });
+
+        function tampilkanDashboard() {
+            loginPage.style.display = 'none';
+            dashboardPage.style.display = 'block';
+            muatSeluruhTabel();
+        }
+
+        function prosesLogout() {
+            localStorage.removeItem('session_user');
+            document.getElementById('loginForm').reset();
+            document.getElementById('error').style.display = 'none';
+            loginPage.style.display = 'flex';
+            dashboardPage.style.display = 'none';
+        }
+
+
+        // --- LOGIC DATABASE & CRUD PERPUSTAKAAN ---
+        // Set up database default jika localStorage masih kosong
+        if (!localStorage.getItem('db_buku')) {
+            localStorage.setItem('db_buku', JSON.stringify([
+                {id: 'B001', judul: 'Laskar Pelangi', pengarang: 'Andrea Hirata', penerbit: 'Bentang Pustaka', tahun: '2005'},
+                {id: 'B002', judul: 'Bumi', pengarang: 'Tere Liye', penerbit: 'Gramedia', tahun: '2014'}
+            ]));
+        }
+        if (!localStorage.getItem('db_anggota')) {
+            localStorage.setItem('db_anggota', JSON.stringify([
+                {id: 'A001', nama: 'Ahmad Fauzi', jk: 'Laki-laki', telp: '081234567890', alamat: 'Jl. Merdeka No. 10'},
+                {id: 'A002', nama: 'Siti Aminah', jk: 'Perempuan', telp: '089876543210', alamat: 'Jl. Sudirman No. 5'}
+            ]));
+        }
+        if (!localStorage.getItem('db_peminjaman')) {
+            localStorage.setItem('db_peminjaman', JSON.stringify([
+                {id: 'P001', nama: 'Ahmad Fauzi', judul: 'Laskar Pelangi', tgl_p: '2026-05-01', tgl_k: '2026-05-08', status: 'Kembali'},
+                {id: 'P002', nama: 'Siti Aminah', judul: 'Bumi', tgl_p: '2026-06-01', tgl_k: '2026-06-08', status: 'Dipinjam'}
+            ]));
+        }
+
+        // Membaca data dan menyusunnya ke dalam baris tabel HTML
+        function muatSeluruhTabel() {
+            const dataBuku = JSON.parse(localStorage.getItem('db_buku')) || [];
+            const dataAnggota = JSON.parse(localStorage.getItem('db_anggota')) || [];
+            const dataPeminjaman = JSON.parse(localStorage.getItem('db_peminjaman')) || [];
+
+            // Render Tabel Buku
+            let barisBuku = '';
+            dataBuku.forEach((item, i) => {
+                barisBuku += `<tr>
+                    <td>${item.id}</td><td>${item.judul}</td><td>${item.pengarang}</td><td>${item.penerbit}</td><td>${item.tahun}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="prosesEditData('buku', ${i})">Edit</button>
+                        <button class="btn btn-hapus" onclick="prosesHapusData('buku', ${i})">Hapus</button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('isiTabelBuku').innerHTML = barisBuku;
+
+            // Render Tabel Anggota
+            let barisAnggota = '';
+            dataAnggota.forEach((item, i) => {
+                barisAnggota += `<tr>
+                    <td>${item.id}</td><td>${item.nama}</td><td>${item.jk}</td><td>${item.telp}</td><td>${item.alamat}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="prosesEditData('anggota', ${i})">Edit</button>
+                        <button class="btn btn-hapus" onclick="prosesHapusData('anggota', ${i})">Hapus</button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('isiTabelAnggota').innerHTML = barisAnggota;
+
+            // Render Tabel Peminjaman
+            let barisPeminjaman = '';
+            dataPeminjaman.forEach((item, i) => {
+                const warnaStatus = item.status === 'Kembali' ? 'green' : 'orange';
+                barisPeminjaman += `<tr>
+                    <td>${item.id}</td><td>${item.nama}</td><td>${item.judul}</td><td>${item.tgl_p}</td><td>${item.tgl_k}</td>
+                    <td><strong style="color: ${warnaStatus};">${item.status}</strong></td>
+                    <td>
+                        <button class="btn btn-edit" onclick="prosesEditData('peminjaman', ${i})">Edit</button>
+                        <button class="btn btn-hapus" onclick="prosesHapusData('peminjaman', ${i})">Hapus</button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('isiTabelPeminjaman').innerHTML = barisPeminjaman;
+        }
+
+        // Membuka Pop-up Input data baru
+        function bukaModalForm(kategori, dataLama = {}) {
+            document.getElementById('modalFormDynamic').style.display = 'flex';
+            document.getElementById('kategoriForm').value = kategori;
+            document.getElementById('indexDataTerpilih').value = '';
+            document.getElementById('judulModal').innerText = 'Tambah Data ' + kategori.toUpperCase();
+            buatInputFormDinamis(kategori, dataLama);
+        }
+
+        function tutupModalForm() {
+            document.getElementById('modalFormDynamic').style.display = 'none';
+            document.getElementById('formTransaksi').reset();
+        }
+
+        function buatInputFormDinamis(kategori, data = {}) {
+            let formHtml = '';
+            if (kategori === 'buku') {
+                formHtml = `
+                    <input type="text" id="inp1" placeholder="ID Buku" class="form-control" value="${data.id || ''}" required>
+                    <input type="text" id="inp2" placeholder="Judul Buku" class="form-control" value="${data.judul || ''}" required>
+                    <input type="text" id="inp3" placeholder="Pengarang" class="form-control" value="${data.pengarang || ''}" required>
+                    <input type="text" id="inp4" placeholder="Penerbit" class="form-control" value="${data.penerbit || ''}" required>
+                    <input type="number" id="inp5" placeholder="Tahun Terbit" class="form-control" value="${data.tahun || ''}" required>
+                `;
+            } else if (kategori === 'anggota') {
+                formHtml = `
+                    <input type="text" id="inp1" placeholder="ID Anggota" class="form-control" value="${data.id || ''}" required>
+                    <input type="text" id="inp2" placeholder="Nama Lengkap Anggota" class="form-control" value="${data.nama || ''}" required>
+                    <select id="inp3" class="form-control" required>
+                        <option value="" disabled selected>Pilih Jenis Kelamin</option>
+                        <option value="Laki-laki" ${data.jk === 'Laki-laki' ? 'selected' : ''}>Laki-laki</option>
+                        <option value="Perempuan" ${data.jk === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
+                    </select>
+                    <input type="text" id="inp4" placeholder="No. Telepon" class="form-control" value="${data.telp || ''}" required>
+                    <input type="text" id="inp5" placeholder="Alamat Rumah" class="form-control" value="${data.alamat || ''}" required>
+                `;
+            } else if (kategori === 'peminjaman') {
+                formHtml = `
+                    <input type="text" id="inp1" placeholder="ID Pinjam" class="form-control" value="${data.id || ''}" required>
+                    <input type="text" id="inp2" placeholder="Nama Anggota Pemilih" class="form-control" value="${data.nama || ''}" required>
+                    <input type="text" id="inp3" placeholder="Judul Buku" class="form-control" value="${data.judul || ''}" required>
+                    <input type="date" id="inp4" class="form-control" value="${data.tgl_p || ''}" required>
+                    <input type="date" id="inp5" class="form-control" value="${data.tgl_k || ''}" required>
+                    <select id="inp6" class="form-control">
+                        <option value="Dipinjam" ${data.status === 'Dipinjam' ? 'selected' : ''}>Dipinjam</option>
+                        <option value="Kembali" ${data.status === 'Kembali' ? 'selected' : ''}>Kembali</option>
+                    </select>
+                `;
+            }
+            document.getElementById('wadahInputan').innerHTML = formHtml;
+        }
+
+        // Mengambil data lama untuk dimasukkan ke form Edit
+        function prosesEditData(kategori, index) {
+            const listData = JSON.parse(localStorage.getItem('db_' + kategori));
+            const dataSpesifik = listData[index];
+            
+            bukaModalForm(kategori, dataSpesifik);
+            document.getElementById('judulModal').innerText = 'Ubah/Update Data ' + kategori.toUpperCase();
+            document.getElementById('indexDataTerpilih').value = index;
+        }
+
+        // Hapus DataPermanen
+        function prosesHapusData(kategori, index) {
+            if (confirm('Apakah kamu yakin ingin menghapus data perpustakaan ini?')) {
+                let listData = JSON.parse(localStorage.getItem('db_' + kategori));
+                listData.splice(index, 1);
+                localStorage.setItem('db_' + kategori, JSON.stringify(listData));
+                muatSeluruhTabel();
+            }
+        }
+
+        // Aksi Simpan Otomatis (Create & Update) ke LocalStorage browser
+        document.getElementById('formTransaksi').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const kategori = document.getElementById('kategoriForm').value;
+            const index = document.getElementById('indexDataTerpilih').value;
+            let listData = JSON.parse(localStorage.getItem('db_' + kategori)) || [];
+
+            let objekDataBaru = {};
+            if (kategori === 'buku') {
+                objekDataBaru = {
+                    id: document.getElementById('inp1').value,
+                    judul: document.getElementById('inp2').value,
+                    pengarang: document.getElementById('inp3').value,
+                    penerbit: document.getElementById('inp4').value,
+                    tahun: document.getElementById('inp5').value
+                };
+            } else if (kategori === 'anggota') {
+                objekDataBaru = {
+                    id: document.getElementById('inp1').value,
+                    nama: document.getElementById('inp2').value,
+                    jk: document.getElementById('inp3').value,
+                    telp: document.getElementById('inp4').value,
+                    alamat: document.getElementById('inp5').value
+                };
+            } else if (kategori === 'peminjaman') {
+                objekDataBaru = {
+                    id: document.getElementById('inp1').value,
+                    nama: document.getElementById('inp2').value,
+                    judul: document.getElementById('inp3').value,
+                    tgl_p: document.getElementById('inp4').value,
+                    tgl_k: document.getElementById('inp5').value,
+                    status: document.getElementById('inp6').value
+                };
+            }
+
+            if (index === '') {
+                listData.push(objekDataBaru); // Menyimpan baru (Create)
+            } else {
+                listData[index] = objekDataBaru; // Menyimpan perubahan (Update)
+            }
+
+            localStorage.setItem('db_' + kategori, JSON.stringify(listData));
+            tutupModalForm();
+            muatSeluruhTabel();
+        });
+    </script>
+</body>
+</html>
